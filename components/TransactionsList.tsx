@@ -1,7 +1,9 @@
-import { SetStateAction } from "react";
+
 import { Category, Transaction } from "../types";
-import { TouchableOpacity, View, Text } from "react-native";
+import { TouchableOpacity, View, Text, Pressable } from "react-native";
 import TransactionListItem from "./TransactionListItem";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 export default function TransactionList({
   transactions,
@@ -20,16 +22,26 @@ export default function TransactionList({
           (category) => category.id === transactions.category_id
         );
         return (
+          <View>
           <TouchableOpacity
             key={transactions.id}
             activeOpacity={0.7}
-            onLongPress={() => deleteTransaction(transactions.id)}
           >
+
             <TransactionListItem
               transaction={transactions}
               categoryInfo={categoryForCurrentItem}
+             
             />
+            
           </TouchableOpacity>
+          <Pressable onPress={()=> deleteTransaction(transactions.id)}>
+          <View style={{padding:6,alignSelf:'flex-end'}}>
+          <MaterialCommunityIcons name="delete" size={24} color="black" />
+          </View>
+          </Pressable>
+          </View>
+
         );
       })}
     </View>

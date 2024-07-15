@@ -1,27 +1,31 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView,StyleSheet,TextStyle } from "react-native";
 import { Category, Transaction, TransactionsByMonth } from "../types";
 import { useSQLiteContext } from "expo-sqlite";
 import TransactionList from "../components/TransactionsList";
 import Card from "../components/ui/Card";
+import AddTransaction from "../components/AddTransaction";
 
 export default function Home() {
   const [Categories, setCategories] = useState<Category[]>([]);
   const [Transactions, setTransactions] = useState<Transaction[]>([]);
+
   const [transactionByMonth, setTransactionsByMonth] =
-    useState<TransactionsByMonth>({
+    React.useState<TransactionsByMonth>({
       totalExpenses: 0,
       totalIncome: 0,
     });
 
   const db = useSQLiteContext();
-  useEffect(() => {
+
+  React.useEffect(() => {
     db.withTransactionAsync(async () => {
-      await getDAta();
+      await getData();
     });
   }, [db]);
 
-  async function getDAta() {
+  async function getData() {
     const result = await db.getAllAsync<Transaction>(
         `SELECT * FROM Transactions 
         ORDER BY date DESC
@@ -64,12 +68,34 @@ export default function Home() {
   async function deleteTransaction(id: number) {
     db.withTransactionAsync(async () => {
       await db.runAsync(`DELETE FROM Transactions WHERE id=?;`, [id]);
+      await getData();
     });
-    await getDAta();
+    
   }
+
+
+  async function insertTransaction(transaction: Transaction) {
+    db.withTransactionAsync(async () => {
+      await db.runAsync(
+        `
+        INSERT INTO Transactions (category_id, amount, date, description, type) VALUES (?, ?, ?, ?, ?);
+      `,
+        [
+          transaction.category_id,
+          transaction.amount,
+          transaction.date,
+          transaction.description,
+          transaction.type,
+        ]
+      );
+      await getData();
+    });
+  }
+
 
   return (
     <ScrollView contentContainerStyle={{ padding: 15, paddingTop: 100 }}>
+      <AddTransaction insertTransaction={insertTransaction}/>
       <TransactionSummary
         totalExpenses={transactionByMonth.totalExpenses}
         totalIncome={transactionByMonth.totalIncome}
@@ -102,17 +128,19 @@ function TransactionSummary({
     // Helper function to format monetary values
     const formatMoney = (value: number) => {
       const absValue = Math.abs(value).toFixed(2);
-      return `${value < 0 ? "-" : ""}₹${absValue}`;
+      return `${value < 0 ? "-" : ""} ₹${absValue}`;
     };
-
+    
   return (
     <Card style={{marginBottom:16}}>
       <Text style={{fontSize:20,fontWeight:'bold'}}>Summary for {readablePeriod}</Text>
       <Text style={styles.summaryText}>
-          Income:{" "}
+          Income:{""}
           <Text style={getMoneyTextStyle(totalIncome)}>
             {formatMoney(totalIncome)}
+           
           </Text>
+          
         </Text>
         <Text style={styles.summaryText}>
           Total Expenses:{" "}

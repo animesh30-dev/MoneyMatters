@@ -39,7 +39,7 @@ export default function App() {
     return (
       <View style={{ flex: 1 }}>
         <ActivityIndicator size={"large"} />
-        <Text>Loading...</Text>
+        <Text>Loading... Please wait</Text>
       </View>
     );
   return (

@@ -1,10 +1,10 @@
 import { Category, Transaction } from "../types";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import Card from "./ui/Card";
 import { AutoSizeText, ResizeTextMode } from "react-native-auto-size-text";
 import { categoryColors, categoryEmojies } from "../constants";
 import { AntDesign } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface TransactionListItemProps {
   transaction: Transaction;
@@ -14,6 +14,8 @@ interface TransactionListItemProps {
 export default function TransactionListItem({
   categoryInfo,
   transaction,
+  
+ 
 }: TransactionListItemProps) {
   const iconName =
     transaction.type === "Expense" ? "minuscircle" : "pluscircle";
@@ -40,12 +42,34 @@ export default function TransactionListItem({
         <TransactionInfo
           id={transaction.id}
           date={transaction.date}
-          description={transaction.desciprtion}
+          description={transaction.description}
         />
+      
       </View>
     </Card>
   );
 }
+
+function TransactionInfo({
+  id,
+  date,
+  description,
+}: {
+  id: number;
+  date: number;
+  description: string;
+}) {
+  return (
+    <View style={{ flexGrow: 1, gap: 6, flexShrink: 1 }}>
+      <Text style={{ fontSize: 16, fontWeight: "bold" }}>{description}</Text>
+      <Text>Transaction number {id}</Text>
+      <Text style={{ fontSize: 12, color: "gray" }}>
+        {new Date(date*1000).toDateString()}
+      </Text>
+    </View>
+  );
+}
+
 
 function Amount({
   iconName,
@@ -70,29 +94,11 @@ function Amount({
     </View>
   );
 }
-function TransactionInfo({
-  id,
-  date,
-  description,
-}: {
-  id: number;
-  date: number;
-  description: string;
-}) {
-  return (
-    <View style={{ flexGrow: 1, gap: 6, flexShrink: 1 }}>
-      <Text style={{ fontSize: 16, fontWeight: "bold" }}>{description}</Text>
-      <Text style={{ fontWeight: "600" }}>Transaction number {id}</Text>
-      <Text style={{ fontSize: 12, color: "gray", fontWeight: "600" }}>
-        {new Date(date * 1006).toDateString()}
-      </Text>
-    </View>
-  );
-}
+
 
 function CategoryItem({
-  categoryInfo,
   categoryColor,
+  categoryInfo,
   emoji,
 }: {
   categoryColor: string;
@@ -103,19 +109,15 @@ function CategoryItem({
     <View
       style={[
         styles.categoryContainer,
-        {
-          backgroundColor: categoryColor + "40",
-        },
+        { backgroundColor: categoryColor + "40" },
       ]}
     >
       <Text style={styles.categoryText}>
-        {" "}
         {emoji} {categoryInfo?.name}
       </Text>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   amount: {
     fontSize: 32,
