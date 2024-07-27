@@ -18,7 +18,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.animesh30dev.MoneyMatters"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +31,7 @@
       "eas": {
         "projectId": "bae54421-4e1e-4fdc-a037-029b9828bbcd"
       }
-    }
+    },
+    "scheme":"MoneyMatters"
   }
 }
